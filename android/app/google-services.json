@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "293280410216",
+    "project_id": "bookly-559b7",
+    "storage_bucket": "bookly-559b7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293280410216:android:6e418f66f617e7a90ae9dd",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAp73JHPJUvwGQzp5ClBfB7Ldxn1rpkD3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

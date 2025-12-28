@@ -1,0 +1,3 @@
+- add reset password email,
+- add google login
+- add the front page
