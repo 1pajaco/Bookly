@@ -1,3 +1,2 @@
-- add reset password email,
-- add google login
-- add the front page
+- add description where the users borrowed the book
+- add offline page if the user wasnt logged in

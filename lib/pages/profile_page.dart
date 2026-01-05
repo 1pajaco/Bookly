@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../auth.dart';
 import '../services/rental_service.dart';
 import '../services/librarian_service.dart';
@@ -240,10 +241,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                                     ),
                                                     child: ClipRRect(
                                                       borderRadius: BorderRadius.circular(4),
-                                                      child: Image.network(
-                                                        rental.bookCoverUrl,
+                                                      child: CachedNetworkImage(
+                                                        imageUrl: rental.bookCoverUrl,
                                                         fit: BoxFit.cover,
-                                                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.book, size: 20),
+                                                        placeholder: (c, url) => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                                                        errorWidget: (c, url, err) => const Icon(Icons.book, size: 20),
                                                       ),
                                                     ),
                                                   )
@@ -273,6 +275,23 @@ class _ProfilePageState extends State<ProfilePage> {
                                                         'Due: ${rental.dueDate.toString().split(' ')[0]}',
                                                         style: TextStyle(fontSize: 12, color: Colors.grey[400]),
                                                       ),
+                                                      const SizedBox(height: 4),
+                                                      // Show library name if available
+                                                      if (rental.libraryId != null)
+                                                        FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                                                          future: FirebaseFirestore.instance.collection('libraries').doc(rental.libraryId).get(),
+                                                          builder: (context, libSnap) {
+                                                            if (libSnap.connectionState == ConnectionState.waiting) {
+                                                              return const Text('Library: loading...', style: TextStyle(fontSize: 12, color: Colors.grey));
+                                                            }
+                                                            final data = libSnap.data?.data();
+                                                            final name = (data?['name'] as String?)?.trim();
+                                                            return Text(
+                                                              'From: ${name != null && name.isNotEmpty ? name : 'Unknown library'}',
+                                                              style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                                                            );
+                                                          },
+                                                        ),
                                                     ],
                                                   ),
                                                 ),
@@ -351,7 +370,24 @@ class _ProfilePageState extends State<ProfilePage> {
                                         child: ListTile(
                                           leading: const Icon(Icons.book),
                                           title: Text(e.bookTitle),
-                                          subtitle: Text('Due: ${_normalize(e.dueDate).toString().split(' ')[0]}'),
+                                          subtitle: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Due: ${_normalize(e.dueDate).toString().split(' ')[0]}'),
+                                              if (e.libraryId != null)
+                                                FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                                                  future: FirebaseFirestore.instance.collection('libraries').doc(e.libraryId).get(),
+                                                  builder: (context, libSnap) {
+                                                    if (libSnap.connectionState == ConnectionState.waiting) {
+                                                      return const Text('Library: loading...', style: TextStyle(fontSize: 12));
+                                                    }
+                                                    final data = libSnap.data?.data();
+                                                    final name = (data?['name'] as String?)?.trim();
+                                                    return Text('From: ${name != null && name.isNotEmpty ? name : 'Unknown library'}');
+                                                  },
+                                                ),
+                                            ],
+                                          ),
                                         ),
                                       )),
                                 ],

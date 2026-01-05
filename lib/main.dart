@@ -7,6 +7,7 @@ import 'firebase_options.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'pages/home_page.dart';
 import 'pages/profile_page.dart';
+import 'auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -84,6 +85,22 @@ class _LandingPageState extends State<LandingPage> {
     if (!_initialized) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    return _isOffline ? const ProfilePage(showBack: false) : HomePage();
+    if (_isOffline) {
+      final user = Auth().currentUser;
+      if (user == null) {
+        // Offline and no signed-in user: show a minimal offline message
+        return const Scaffold(
+          body: Center(
+            child: Text(
+              'Offline: Please connect to the internet to sign in.',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
+      return const ProfilePage(showBack: false);
+    }
+
+    return HomePage();
   }
 }

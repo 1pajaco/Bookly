@@ -1,16 +1,14 @@
-# flutter_application_1
+# Bookly
 
-A new Flutter project.
+Bookly is a library application built with Flutter and Firebase. It provides a simple catalog for books with user authentication and cloud-backed data storage so users can browse, add, edit, and manage books in a shared library.
 
-## Getting Started
+## Key features
+- User authentication (Firebase Auth)
+- Privilaged users and standard users
+- Book catalog (FireStore)
+- Real-time updates and cloud syncing
+- Add, edit, delete, borrow/return book actions
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tech stack
+- Flutter (Dart)
+- Firebase: Firebase Auth, Cloud Firestore

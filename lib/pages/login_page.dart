@@ -13,6 +13,7 @@ class LoginPage extends StatefulWidget {
 class _MyWidgetState extends State<LoginPage> {
   String? errorMessage = '';
   bool isLogin = true;
+  bool _passwordVisible = false;
 
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPaswword = TextEditingController();
@@ -49,10 +50,19 @@ class _MyWidgetState extends State<LoginPage> {
     return const Text('Login');
   }
 
-  Widget _entryField(String title, TextEditingController controller) {
+  Widget _entryField(String title, TextEditingController controller, {bool isPassword = false}) {
     return TextField(
       controller: controller,
-      decoration: InputDecoration(labelText: title),
+      obscureText: isPassword && !_passwordVisible,
+      decoration: InputDecoration(
+        labelText: title,
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off),
+                onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
+              )
+            : null,
+      ),
     );
   }
 
@@ -115,7 +125,7 @@ class _MyWidgetState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             _entryField('email', _controllerEmail),
-            _entryField('password', _controllerPaswword),
+            _entryField('password', _controllerPaswword, isPassword: true),
             _errorMessage(),
             _submitButton(),
             _forgotPasswordButton(),
