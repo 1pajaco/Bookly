@@ -41,25 +41,41 @@ class _RemoveCopiesPageState extends State<RemoveCopiesPage> {
     if (user == null) return;
     try {
       final libId = await LibrarianService.getLibraryIdByUid(user.uid);
-      if (mounted) setState(() { _libraryId = libId; });
+      if (mounted)
+        setState(() {
+          _libraryId = libId;
+        });
     } catch (_) {}
   }
 
   Future<void> _search(String q) async {
-    setState(() { _isSearching = true; });
+    setState(() {
+      _isSearching = true;
+    });
     try {
       final results = await BookService.searchBooks(q);
-      setState(() { _results = results; });
+      setState(() {
+        _results = results;
+      });
     } finally {
-      setState(() { _isSearching = false; });
+      setState(() {
+        _isSearching = false;
+      });
     }
   }
 
   Future<void> _selectBook(Map<String, dynamic> book) async {
-    setState(() { _selectedBook = book; _availableInLibrary = 0; _rentedInLibrary = 0; });
+    setState(() {
+      _selectedBook = book;
+      _availableInLibrary = 0;
+      _rentedInLibrary = 0;
+    });
     final libId = _libraryId;
     if (libId == null) return;
-    final stats = await LibraryService.getCopyStats(libraryId: libId, bookId: book['id'] as String);
+    final stats = await LibraryService.getCopyStats(
+      libraryId: libId,
+      bookId: book['id'] as String,
+    );
     setState(() {
       _availableInLibrary = stats['available'] ?? 0;
       _rentedInLibrary = stats['rented'] ?? 0;
@@ -74,7 +90,22 @@ class _RemoveCopiesPageState extends State<RemoveCopiesPage> {
     final count = int.tryParse(_countCtrl.text.trim());
     if (count == null || count <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter a valid number of copies to remove'), backgroundColor: Colors.orange),
+        const SnackBar(
+          content: Text('Enter a valid number of copies to remove'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    if (count > _availableInLibrary) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'You cannot remove $count copies. Only $_availableInLibrary available.',
+          ),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
@@ -89,7 +120,9 @@ class _RemoveCopiesPageState extends State<RemoveCopiesPage> {
       return;
     }
 
-    setState(() { _isWorking = true; });
+    setState(() {
+      _isWorking = true;
+    });
     try {
       final removed = await LibraryService.removeAvailableCopies(
         libraryId: libId,
@@ -107,10 +140,16 @@ class _RemoveCopiesPageState extends State<RemoveCopiesPage> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error removing copies: $e'), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text('Error removing copies: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
-      if (mounted) setState(() { _isWorking = false; });
+      if (mounted)
+        setState(() {
+          _isWorking = false;
+        });
     }
   }
 
@@ -133,7 +172,10 @@ class _RemoveCopiesPageState extends State<RemoveCopiesPage> {
                           icon: const Icon(Icons.clear),
                           onPressed: () {
                             _searchCtrl.clear();
-                            setState(() { _results = []; _selectedBook = null; });
+                            setState(() {
+                              _results = [];
+                              _selectedBook = null;
+                            });
                           },
                         )
                       : null,
@@ -146,28 +188,33 @@ class _RemoveCopiesPageState extends State<RemoveCopiesPage> {
             Expanded(
               child: _selectedBook == null
                   ? (_isSearching
-                      ? const Center(child: CircularProgressIndicator())
-                      : ListView.builder(
-                          itemCount: _results.length,
-                          itemBuilder: (context, index) {
-                            final book = _results[index];
-                            return Card(
-                              child: ListTile(
-                                leading: const Icon(Icons.book),
-                                title: Text(book['title'] ?? 'Untitled'),
-                                subtitle: Text(book['author'] ?? ''),
-                                onTap: () => _selectBook(book),
-                              ),
-                            );
-                          },
-                        ))
+                        ? const Center(child: CircularProgressIndicator())
+                        : ListView.builder(
+                            itemCount: _results.length,
+                            itemBuilder: (context, index) {
+                              final book = _results[index];
+                              return Card(
+                                child: ListTile(
+                                  leading: const Icon(Icons.book),
+                                  title: Text(book['title'] ?? 'Untitled'),
+                                  subtitle: Text(book['author'] ?? ''),
+                                  onTap: () => _selectBook(book),
+                                ),
+                              );
+                            },
+                          ))
                   : SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Selected: ${_selectedBook!['title']}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          Text(
+                            'Selected: ${_selectedBook!['title']}',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           const SizedBox(height: 8),
-                          Text('Available in your library: $_availableInLibrary'),
+                          Text(
+                            'Available in your library: $_availableInLibrary',
+                          ),
                           Text('Currently rented: $_rentedInLibrary'),
                           const SizedBox(height: 12),
                           TextField(
@@ -186,7 +233,9 @@ class _RemoveCopiesPageState extends State<RemoveCopiesPage> {
                           ),
                           const SizedBox(height: 12),
                           TextButton(
-                            onPressed: () => setState(() { _selectedBook = null; }),
+                            onPressed: () => setState(() {
+                              _selectedBook = null;
+                            }),
                             child: const Text('Back to results'),
                           ),
                         ],
