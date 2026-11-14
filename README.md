@@ -13,7 +13,7 @@ Bookly is a library application built with Flutter and Firebase. It provides a s
 - Flutter (Dart)
 - Firebase: Firebase Auth, Cloud Firestore
 
-## Runing using flutter in vscode
+## Running using flutter in Vscode
 COMMANDS:
 flutter devices               # list devices connected to your computer
 flutter run -d <device_id>    # replace with an ID from that list
